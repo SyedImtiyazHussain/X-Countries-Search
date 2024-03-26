@@ -1,85 +1,68 @@
-import { useEffect, useState } from "react";
-import "./App.css";
 
-export default function App() {
+import logo from "./logo.svg";
+import "./App.css";
+import { useEffect, useState } from "react";
+
+function App() {
   const [countries, setCountries] = useState([]);
-  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const handleChange = (e) => {
+    setSearch(e.target.value);
+  };
 
   useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all")
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        const resp = await fetch("https://restcountries.com/v3.1/all");
+        const data = await resp.json();
         setCountries(data);
-        setFilteredCountries(data);
-      })
-      .catch((error) => console.error("Error in", error));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
   }, []);
 
-  const containerStyle = {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    width: "100vw",
-  };
-
-  const countryCard = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    padding: "10px",
-    margin: "10px",
-    width: "200px",
-  };
-
-  const flagStyle = {
-    width: "100px",
-    height: "100px",
-  };
-
-  const inputStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "10px",
-    borderRadius: "5px",
-    width: "100%",
-  };
-
-  const handleSearch = (e) => {
-    const searchString = e.target.value.toLowerCase();
-    const filtered = countries.filter((country) =>
-      country.name.common.toLowerCase().includes(searchString)
+  useEffect(() => {
+    const data = countries.filter((country) =>
+      country.name.common.toLowerCase().includes(search.toLowerCase())
     );
-    setFilteredCountries(filtered);
-  };
+    setFiltered(data);
+  }, [search]);
 
+  console.log(countries);
   return (
-    <>
-      <div style={inputStyle}>
+    <div>
+      <div className="inp">
         <input
           type="text"
-          style={{ width: "50%", padding: "10px", borderRadius: "5px" }}
-          placeholder="Search for countries"
-          onChange={handleSearch}
+          placeholder="Enter a country"
+          onChange={(e) => handleChange(e)}
         />
       </div>
-      <div style={containerStyle}>
-        {filteredCountries.map((country) => (
-          <div key={country.cca3} style={countryCard}>
-            <img
-              src={country.flags.png}
-              alt={`Flag of ${country.flags.alt}`}
-              style={flagStyle}
-            />
-            <h2>{country.name.common}</h2>
-          </div>
-        ))}
+      <div className="App">
+        {search === ""
+          ? countries.map((country) => {
+              return (
+                <div className="countryCard">
+                  <img src={country.flags.png} alt={country.flag}></img>
+                  <h3>{country.name.common}</h3>
+                </div>
+              );
+            })
+          : filtered.map((country) => {
+              return (
+                <div className="countryCard">
+                  <img src={country.flags.png} alt={country.flag}></img>
+                  <h3>{country.name.common}</h3>
+                </div>
+              );
+            })}
       </div>
-    </>
+    </div>
   );
 }
+
+export default App;
