@@ -24,13 +24,16 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const data = countries.filter((country) =>
-      country.name.common.toLowerCase().includes(search.toLowerCase())
-    );
-    setFiltered(data);
-  }, [search]);
+    try {
+      const data = countries.filter((country) =>
+        country.name.common.toLowerCase().includes(search.toLowerCase())
+      );
+      setFiltered(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [search, countries]);
 
-  console.log(countries);
   return (
     <div>
       <div className="inp">
@@ -42,22 +45,26 @@ function App() {
       </div>
       <div className="App">
         {search === ""
-          ? countries.map((country) => {
-              return (
-                <div className="countryCard">
-                  <img src={country.flags.png} alt={country.flag}></img>
-                  <h2>{country.name.common}</h2>
-                </div>
-              );
-            })
-          : filtered.map((country) => {
-              return (
-                <div className="countryCard">
-                  <img src={country.flags.png} alt={country.flag}></img>
-                  <h2>{country.name.common}</h2>
-                </div>
-              );
-            })}
+          ? countries.map((country, index) => (
+              <div className="countryCard" key={index}>
+                <img
+                  src={country.flags.png}
+                  alt={country.name.common}
+                  key={index}
+                ></img>
+                <h2>{country.name.common}</h2>
+              </div>
+            ))
+          : filtered.map((country, index) => (
+              <div className="countryCard" key={index}>
+                <img
+                  src={country.flags.png}
+                  alt={country.name.common}
+                  key={index}
+                ></img>
+                <h2>{country.name.common}</h2>
+              </div>
+            ))}
       </div>
     </div>
   );
