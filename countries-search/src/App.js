@@ -10,17 +10,16 @@ function App() {
     setSearch(e.target.value);
   };
 
-  const fetchData = async () => {
-    try {
-      const resp = await fetch("https://restcountries.com/v3.1/all");
-      const data = await resp.json();
-      setCountries(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resp = await fetch("https://restcountries.com/v3.1/all");
+        const data = await resp.json();
+        setCountries(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
     fetchData();
   }, []);
 
@@ -45,21 +44,17 @@ function App() {
         {search === ""
           ? countries.map((country) => {
               return (
-                <div className="container">
-                  <div className="countryCard">
+                <div className="countryCard">
                   <img src={country.flags.png} alt={country.flag}></img>
                   <h3>{country.name.common}</h3>
-                </div>
                 </div>
               );
             })
           : filtered.map((country) => {
               return (
-                <div className="container">
-                  <div className="countryCard">
-                  <img name="countryflag" src={country.flags.png} alt={country.flag}></img>
-                  <h3 name="countryname">{country.name.common}</h3>
-                </div>
+                <div className="countryCard">
+                  <img src={country.flags.png} alt={country.flag}></img>
+                  <h3>{country.name.common}</h3>
                 </div>
               );
             })}
